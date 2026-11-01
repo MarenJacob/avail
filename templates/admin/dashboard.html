@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard{% endblock %}
+{% block content %}
+<h1>Admin Dashboard</h1>
+<p class="dashboard-subtitle">Your operations at a glance. Use the admin workspace navigation to manage the kitchen.</p>
+<div class="stats">
+  <div class="stat"><h3>{{ stats.total_orders }}</h3><p>Total Orders</p></div>
+  <div class="stat"><h3>{{ stats.pending }}</h3><p>Pending</p></div>
+  <div class="stat"><h3>{{ stats.delivered }}</h3><p>Delivered</p></div>
+  <div class="stat"><h3>₦{{ "{:,.0f}".format(stats.revenue) }}</h3><p>Delivered order value</p></div>
+  <div class="stat"><h3>{{ stats.unpaid }}</h3><p>Not marked paid</p></div>
+</div>
+<h2 id="orders">Latest orders</h2><p><a href="{{ url_for('admin_reviews') }}">Review customer feedback and ratings ↗</a></p>
+<table class="table">
+  <thead><tr><th>#</th><th>Customer</th><th>Type</th><th>Total</th><th>Payment</th><th>Status</th><th>Action</th></tr></thead>
+  <tbody>
+  {% for o in orders %}
+  <tr>
+    <td>{{ o.order_number }}</td>
+    <td>{{ o.customer_name }}<br><small>{{ o.phone }}</small></td>
+    <td>{{ o.order_type }}</td>
+    <td>₦{{ "{:,.0f}".format(o.total) }}</td>
+    <td>{{ o.payment_status|replace("_", " ")|title }}</td>
+    <td>{{ o.status }}</td>
+    <td>
+      <form method="POST" action="{{ url_for('update_status', order_id=o.id) }}">
+        <select name="status" onchange="this.form.submit()" style="padding:0.3rem;border-radius:4px;border:1px solid #ddd;">
+          {% for s in ["Pending","Confirmed","Preparing","Ready for Pickup","Out for Delivery","Delivered","Cancelled"] %}
+          <option value="{{ s }}" {% if o.status==s %}selected{% endif %}>{{ s }}</option>
+          {% endfor %}
+        </select>
+      </form>
+    </td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

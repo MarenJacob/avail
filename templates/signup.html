@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Sign Up{% endblock %}
+{% block content %}
+<div class="auth-page">
+  <form method="POST" class="form narrow">
+    <h1>Create Account</h1>
+    <label>Full Name <input type="text" name="full_name" required></label>
+    <label>Email <input type="email" name="email" required></label>
+    <label>Phone <input type="tel" name="phone" required></label>
+    <label>Password <input type="password" name="password" required minlength="10" autocomplete="new-password"></label>
+    <label>Referral code (optional) <input type="text" name="referral_code" maxlength="16" value="{{ request.args.get('ref', '') }}" autocomplete="off"></label>
+    <label class="consent-check"><input type="checkbox" name="marketing_consent"> I agree to receive occasional offers and new-menu updates by email. Optional; I can unsubscribe anytime.</label>
+    <button class="btn" type="submit">Sign Up</button>
+    <p class="center">Already have an account? <a href="{{ url_for('login') }}">Log in</a></p>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Track Order{% endblock %}
+{% block content %}
+<h1>Track Your Order</h1>
+<form method="POST" class="form inline">
+  <input type="text" name="order_number" placeholder="e.g. JK-12345" required style="min-width:250px;">
+  <button class="btn" type="submit">Track</button>
+</form>
+{% if order %}
+<div class="card" style="max-width:500px;margin-top:2rem;">
+  <div class="card-body">
+    <h2>{{ order.order_number }}</h2>
+    <p>Status: <strong>{{ order.status }}</strong></p>
+    <p>Total: ₦{{ "{:,.0f}".format(order.total) }}</p>
+    <p>Placed: {{ order.created_at.strftime("%d %b %Y %H:%M") }}</p>
+  </div>
+</div>
+{% endif %}
+{% endblock %}

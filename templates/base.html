@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><script>document.documentElement.classList.add("js-enabled");</script><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f20b0b">
+  <link rel="icon" type="image/png" sizes="64x64" href="{{ url_for('static', filename='favicon-64.png') }}">
+  <link rel="apple-touch-icon" href="{{ url_for('static', filename='icon-192.png') }}">
+  <link rel="manifest" href="{{ url_for('static', filename='manifest.webmanifest') }}">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="description" content="{% block meta_description %}Jenny's Kitchen — freshly made favourites in Jos South, Plateau State. Order delicious meals for delivery or pickup.{% endblock %}">
+  <meta name="robots" content="index,follow">
+  <link rel="canonical" href="{{ request.url.split('?')[0] }}">
+  <title>{% block title %}Fresh food, feel-good moments{% endblock %} · Jenny's Kitchen</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<div class="page-loader" id="page-loader" aria-label="Loading Jenny's Kitchen"><img class="loader-logo" src="{{ url_for('static', filename='images/jennys-kitchen-logo.png') }}" alt="Jenny's Kitchen"><span class="loader-word">Jenny's <b>Kitchen</b></span><span class="loader-track"><i></i></span><small>MADE FRESH. SERVED HAPPY.</small></div>
+{% if not session.admin_id %}<div class="announcement"><span>{{ site.tagline if site is defined and site.tagline else "Freshly made. Always full of flavour." }}</span><span>{{ site.address if site is defined and site.address else "Serving Jos South, Plateau State" }}</span></div>{% endif %}
+{% if session.admin_id %}
+<div class="admin-shell" id="admin-shell">
+  <button class="admin-sidebar-backdrop" type="button" aria-label="Close admin navigation" data-admin-close></button>
+  <aside class="admin-sidebar" id="admin-sidebar" aria-label="Admin navigation">
+    <a class="brand admin-brand" href="{{ url_for('admin_dashboard') }}">
+      <img class="brand-logo" src="{{ url_for('static', filename='images/jennys-kitchen-logo.png') }}" alt="Jenny's Kitchen official logo">
+      <span class="admin-brand-tag">ADMIN WORKSPACE</span>
+    </a>
+    <div class="sidebar-group"><span class="sidebar-label">WORKSPACE</span>
+      <a class="admin-nav-link {% if request.endpoint == 'admin_dashboard' %}is-active{% endif %}" href="{{ url_for('admin_dashboard') }}"><span class="nav-icon">⌂</span><span>Overview</span></a>
+      <a class="admin-nav-link" href="{{ url_for('admin_dashboard') }}#orders"><span class="nav-icon">▤</span><span>Orders</span></a>
+      <a class="admin-nav-link {% if request.endpoint in ('admin_menu','edit_item','set_item_availability','toggle_item','delete_item') %}is-active{% endif %}" href="{{ url_for('admin_menu') }}"><span class="nav-icon">▦</span><span>Menu & availability</span></a>
+      <a class="admin-nav-link {% if request.endpoint in ('admin_reservations','reservation_status') %}is-active{% endif %}" href="{{ url_for('admin_reservations') }}"><span class="nav-icon">▣</span><span>Reservations</span></a>
+      <a class="admin-nav-link {% if request.endpoint in ('admin_delivery_zones','toggle_delivery_zone') %}is-active{% endif %}" href="{{ url_for('admin_delivery_zones') }}"><span class="nav-icon">⌖</span><span>Delivery areas & fees</span></a>
+      <a class="admin-nav-link {% if request.endpoint in ('admin_promotions','toggle_promotion') %}is-active{% endif %}" href="{{ url_for('admin_promotions') }}"><span class="nav-icon">％</span><span>Promotions</span></a>
+      <a class="admin-nav-link {% if request.endpoint in ('admin_campaigns','send_campaign') %}is-active{% endif %}" href="{{ url_for('admin_campaigns') }}"><span class="nav-icon">✉</span><span>Newsletters & CRM</span></a>
+      <a class="admin-nav-link {% if request.endpoint in ('admin_reviews','moderate_review') %}is-active{% endif %}" href="{{ url_for('admin_reviews') }}"><span class="nav-icon">☆</span><span>Reviews & feedback</span></a>
+      <a class="admin-nav-link {% if request.endpoint == 'admin_analytics' %}is-active{% endif %}" href="{{ url_for('admin_analytics') }}"><span class="nav-icon">▥</span><span>Analytics</span></a>
+      <a class="admin-nav-link {% if request.endpoint == 'admin_content' %}is-active{% endif %}" href="{{ url_for('admin_content') }}"><span class="nav-icon">▧</span><span>Content pages</span></a>
+      <a class="admin-nav-link {% if request.endpoint in ('admin_site','content_page') %}is-active{% endif %}" href="{{ url_for('admin_site') }}"><span class="nav-icon">⚙</span><span>Brand & website</span></a>
+    </div>
+    <div class="sidebar-group sidebar-bottom"><span class="sidebar-label">STORE</span>
+      <a class="admin-nav-link" href="{{ url_for('index') }}" target="_blank" rel="noopener"><span class="nav-icon">↗</span><span>View storefront</span></a>
+      <a class="admin-nav-link nav-signout" href="{{ url_for('admin_logout') }}"><span class="nav-icon">⇥</span><span>Sign out</span></a>
+    </div>
+  </aside>
+  <div class="admin-main">
+    <header class="admin-topbar">
+      <div class="admin-topbar-left"><button class="admin-menu-toggle" type="button" aria-label="Open admin navigation" aria-expanded="false" aria-controls="admin-sidebar" data-admin-toggle><span></span><span></span><span></span></button><span class="admin-breadcrumb">JENNY'S KITCHEN <i>/</i> ADMIN</span></div>
+      <a href="{{ url_for('index') }}" target="_blank" rel="noopener" class="admin-store-link">View customer storefront <span>↗</span></a>
+    </header>
+{% else %}
+<header class="site-header"><div class="nav-inner">
+  <a href="{{ url_for('index') }}" class="brand customer-brand" aria-label="Jenny's Kitchen home"><img class="brand-logo" src="{{ url_for('static', filename='images/jennys-kitchen-logo.png') }}" alt="Jenny's Kitchen official logo"></a>
+  <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="nav-links"><span></span><span></span><span></span></button>
+  <nav class="nav-links" id="nav-links" aria-label="Main navigation">
+    <a href="{{ url_for('index') }}" {% if request.endpoint == 'index' %}aria-current="page"{% endif %}>Home</a><a href="{{ url_for('menu') }}">Our Menu</a><a href="{{ url_for('index') }}#our-story">Our Story</a><a href="{{ url_for('index') }}#contact">Contact</a><a href="{{ url_for('reserve_table') }}">Reserve a table</a>
+    <a class="cart-link" href="{{ url_for('cart_page') }}">Bag <span class="cart-badge" id="cart-count">0</span></a>
+    {% if current_user.is_authenticated %}<a href="{{ url_for('account') }}">My Account</a><a href="{{ url_for('logout') }}">Log out</a>{% else %}<a href="{{ url_for('track') }}">Track Order</a><a href="{{ url_for('login') }}" class="login-link">Log in</a>{% endif %}
+    <a href="{{ url_for('menu') }}" class="nav-order">Order now <span>↗</span></a>
+  </nav>
+</div></header>
+{% endif %}
+{% with msgs = get_flashed_messages() %}{% if msgs %}<div class="flash-wrap">{% for m in msgs %}<div class="flash">{{ m }}</div>{% endfor %}</div>{% endif %}{% endwith %}
+<main>{% block content %}{% endblock %}</main>{% if session.admin_id %}</div></div>{% endif %}
+{% if not session.admin_id and request.cookies.get('jk_analytics_consent') not in ('yes','no') %}<aside class="consent-banner" aria-label="Analytics cookie preferences"><div><strong>Your privacy matters</strong><p>Optional, privacy-conscious analytics help us improve the website. We only record basic page and campaign events if you agree. Order processing works either way.</p></div><div class="consent-actions"><form method="post" action="{{ url_for('analytics_consent') }}"><input type="hidden" name="choice" value="reject"><button class="btn btn-small btn-outline" type="submit">Reject optional</button></form><form method="post" action="{{ url_for('analytics_consent') }}"><input type="hidden" name="choice" value="accept"><button class="btn btn-small" type="submit">Accept analytics</button></form></div></aside>{% endif %}
+{% if not session.admin_id %}<footer class="site-footer" id="contact"><div class="footer-main"><div class="footer-brand"><a href="{{ url_for('index') }}" class="brand brand-light"><img class="brand-logo" src="{{ url_for('static', filename='images/jennys-kitchen-logo.png') }}" alt="Jenny's Kitchen official logo"></a><p>Good food brings people together. We make the kind of meals that turn an ordinary day into a little celebration.</p></div><div><h4>Explore</h4><a href="{{ url_for('menu') }}">Our menu</a><a href="{{ url_for('index') }}#our-story">Our story</a><a href="{{ url_for('public_reviews') }}">Customer reviews</a><a href="{{ url_for('track') }}">Track an order</a></div><div><h4>Get in touch</h4><p>📍 {{ site.address if site is defined and site.address else 'Jos South, Plateau State, Nigeria' }}</p>{% if site is defined and site.phone %}<p>☎ {{ site.phone }}</p>{% endif %}{% if site is defined and site.whatsapp %}<a href="https://wa.me/{{ site.whatsapp|replace('+','')|replace(' ','') }}" target="_blank" rel="noopener">Chat on WhatsApp ↗</a>{% endif %}<a href="{{ url_for('admin_login') }}" class="admin-link">Admin access</a></div><div class="footer-note"><span>MADE FRESH, SERVED HAPPY.</span><p>Big flavour. Warm hospitality. Every time.</p></div></div><div class="footer-bottom"><span>© {{ 2026 }} Jenny's Kitchen</span><span>Jos South · Plateau State · Nigeria</span></div></footer>{% endif %}
+<script type="application/ld+json">{{ {'@context':'https://schema.org','@type':'Restaurant','name':"Jenny's Kitchen",'logo':request.url_root.rstrip('/') ~ url_for('static', filename='images/jennys-kitchen-logo.png'),'description':"Freshly prepared meals in Jos South, Plateau State, Nigeria.",'address':{'@type':'PostalAddress','streetAddress': global_site.address,'addressLocality':'Jos South','addressRegion':'Plateau State','addressCountry':'NG'},'telephone':global_site.phone or None,'servesCuisine':['Nigerian','Fast Food'],'url':request.url_root}|tojson }}</script>
+<script>
+window.addEventListener('load',()=>{const loader=document.getElementById('page-loader');if(loader){loader.classList.add('is-hidden');setTimeout(()=>loader.remove(),550)}});
+if('serviceWorker' in navigator && location.protocol.startsWith('http')){window.addEventListener('load',()=>navigator.serviceWorker.register('{{ url_for("static", filename="service-worker.js") }}').catch(()=>{}));}
+(async()=>{try{const r=await fetch('{{ url_for("cart_count") }}');const d=await r.json();const el=document.getElementById('cart-count');if(el)el.textContent=d.count||0;}catch(e){}})();
+function trackEvent(event,campaign=''){if(document.cookie.split('; ').some(x=>x==='jk_analytics_consent=yes')){fetch('{{ url_for('analytics_event') }}',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({event,path:location.pathname,campaign:new URLSearchParams(location.search).get('utm_campaign')||campaign})}).catch(()=>{})}}
+trackEvent('page_view');
+const customerToggle=document.querySelector('.nav-toggle');
+const customerNav=document.querySelector('.nav-links');
+function closeCustomerNav(){if(!customerToggle||!customerNav)return;customerNav.classList.remove('is-open');customerToggle.classList.remove('is-open');customerToggle.setAttribute('aria-expanded','false');customerToggle.setAttribute('aria-label','Open navigation');}
+customerToggle?.addEventListener('click',()=>{const open=customerNav.classList.toggle('is-open');customerToggle.classList.toggle('is-open',open);customerToggle.setAttribute('aria-expanded',String(open));customerToggle.setAttribute('aria-label',open?'Close navigation':'Open navigation');});
+customerNav?.querySelectorAll('a').forEach(link=>link.addEventListener('click',closeCustomerNav));
+const adminShell=document.getElementById('admin-shell');
+const adminToggle=document.querySelector('[data-admin-toggle]');
+const adminBackdrop=document.querySelector('[data-admin-close]');
+const adminSidebar=document.getElementById('admin-sidebar');
+function setAdminNav(open){if(!adminShell||!adminToggle)return;adminShell.classList.toggle('sidebar-open',open);adminToggle.setAttribute('aria-expanded',String(open));adminToggle.setAttribute('aria-label',open?'Close admin navigation':'Open admin navigation');document.body.classList.toggle('admin-nav-open',open);if(adminSidebar){const drawerMode=window.innerWidth<=980;adminSidebar.inert=drawerMode&&!open;if(drawerMode)adminSidebar.setAttribute('aria-hidden',String(!open));else adminSidebar.removeAttribute('aria-hidden');}if(open&&window.innerWidth<=980)adminSidebar?.querySelector('a.admin-nav-link')?.focus();else if(!open&&window.innerWidth<=980)adminToggle.focus();}
+if(adminSidebar&&window.innerWidth<=980){adminSidebar.inert=true;adminSidebar.setAttribute('aria-hidden','true');}
+adminToggle?.addEventListener('click',()=>setAdminNav(!adminShell.classList.contains('sidebar-open')));
+adminBackdrop?.addEventListener('click',()=>setAdminNav(false));
+document.querySelectorAll('.admin-nav-link').forEach(link=>link.addEventListener('click',()=>setAdminNav(false)));
+document.addEventListener('keydown',event=>{if(event.key==='Escape'){closeCustomerNav();setAdminNav(false);}});
+window.addEventListener('resize',()=>{if(window.innerWidth>980)setAdminNav(false);if(window.innerWidth>760)closeCustomerNav();});
+document.addEventListener('click',async e=>{const campaignLink=e.target.closest("a[href*=\'utm_campaign\']");if(campaignLink)trackEvent('campaign_click');const rm=e.target.closest('.remove-btn');if(rm){e.preventDefault();const r=await fetch('{{ url_for("cart_remove") }}',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:rm.dataset.id})});if(r.ok)location.reload()}});
+const slider=document.querySelector('[data-slider]');if(slider){const slides=[...slider.querySelectorAll('.hero-slide')],dots=[...slider.querySelectorAll('[data-slide-to]')];let current=0,timer;function show(i){current=(i+slides.length)%slides.length;slides.forEach((s,n)=>s.classList.toggle('active',n===current));dots.forEach((d,n)=>{d.classList.toggle('active',n===current);d.setAttribute('aria-current',n===current?'true':'false')});const count=slider.querySelector('.slide-count');if(count)count.innerHTML='0'+(current+1)+' <i>/</i> 0'+slides.length}function play(){clearInterval(timer);if(slides.length>1)timer=setInterval(()=>show(current+1),6500)}dots.forEach(d=>d.addEventListener('click',()=>{show(Number(d.dataset.slideTo));play()}));slider.querySelector('[data-prev]')?.addEventListener('click',()=>{show(current-1);play()});slider.querySelector('[data-next]')?.addEventListener('click',()=>{show(current+1);play()});let startX=0;slider.addEventListener('touchstart',e=>startX=e.changedTouches[0].screenX,{passive:true});slider.addEventListener('touchend',e=>{const dx=e.changedTouches[0].screenX-startX;if(Math.abs(dx)>50){show(current+(dx<0?1:-1));play()}},{passive:true});play()}
+const filterBtns=document.querySelectorAll('[data-filter]');filterBtns.forEach(btn=>btn.addEventListener('click',()=>{filterBtns.forEach(x=>x.classList.remove('active'));btn.classList.add('active');document.querySelectorAll('[data-category]').forEach(card=>{card.hidden=btn.dataset.filter!=='all'&&card.dataset.category!==btn.dataset.filter})}));
+</script>
+{% if not session.admin_id and global_site.whatsapp %}<a class="whatsapp-support" href="https://wa.me/{{ global_site.whatsapp|replace('+','')|replace(' ','') }}" target="_blank" rel="noopener" aria-label="Chat with Jenny's Kitchen on WhatsApp">WhatsApp support ↗</a>{% endif %}
+{% if not session.admin_id %}<a href="{{ url_for('checkout') }}" class="floating-checkout" id="floating-checkout" aria-live="polite"><span class="floating-checkout-icon">🛍</span><span><b>Ready to checkout?</b><small><span id="floating-cart-count">0</span> item(s) in your bag</small></span><strong>Checkout now ↗</strong></a>
+<script>
+(()=>{const toast=document.getElementById('floating-checkout');let hideTimer;function showToast(count){if(!toast)return;document.getElementById('floating-cart-count').textContent=count;toast.classList.add('is-visible');clearTimeout(hideTimer);hideTimer=setTimeout(()=>toast.classList.remove('is-visible'),3800)}document.addEventListener('click',async e=>{const btn=e.target.closest('.add-btn');if(!btn)return;e.preventDefault();if(btn.dataset.busy==='1')return;btn.dataset.busy='1';const label=btn.innerHTML;btn.innerHTML='Adding…';btn.disabled=true;try{const response=await fetch('{{ url_for("cart_add") }}',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:btn.dataset.id})});const data=await response.json();if(!response.ok)throw new Error(data.error||'We could not add this meal. Please try again.');const badge=document.getElementById('cart-count');if(badge)badge.textContent=data.cart_count;showToast(data.cart_count);btn.innerHTML='Added ✓';setTimeout(()=>{btn.innerHTML=label;btn.disabled=false;btn.dataset.busy='0'},850)}catch(err){btn.innerHTML=label;btn.disabled=false;btn.dataset.busy='0';let box=document.querySelector('.action-error');if(!box){box=document.createElement('div');box.className='action-error';document.body.append(box)}box.textContent=err.message+' You can retry or refresh the menu.';box.classList.add('show');setTimeout(()=>box.classList.remove('show'),4500)}});})();
+</script>{% endif %}
+{% block scripts %}{% endblock %}
+</body></html>

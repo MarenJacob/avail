@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Manage Menu{% endblock %}
+{% block content %}
+<h1>Manage Menu</h1>
+<p style="margin-bottom:1.5rem;"><a href="{{ url_for('admin_dashboard') }}">← Back to dashboard</a></p>
+
+<h2>Add New Item</h2>
+<form method="POST" enctype="multipart/form-data" class="form inline" style="margin-bottom:2rem;">
+  <input type="text" name="name" placeholder="Name" required>
+  <input type="text" name="description" placeholder="Description" required>
+  <input type="number" step="0.01" name="price" placeholder="Price" required>
+  <input type="text" name="category" placeholder="Category" required>
+  <input type="file" name="image" accept="image/*">
+  <button class="btn" type="submit">Add Item</button>
+</form>
+
+<h2>All Items ({{ items|length }})</h2>
+<table class="table">
+  <thead>
+    <tr><th>Image</th><th>Name</th><th>Category</th><th>Price</th><th>Available</th><th>Actions</th></tr>
+  </thead>
+  <tbody>
+  {% for i in items %}
+  <tr>
+    <td>
+      <img src="{{ url_for('static', filename='uploads/' + i.image) }}"
+           onerror="this.src='https://via.placeholder.com/100?text=Food'"
+           class="thumb" alt="{{ i.name }}">
+    </td>
+    <td>{{ i.name }}</td>
+    <td>{{ i.category }}</td>
+    <td>₦{{ "{:,.0f}".format(i.price) }}</td>
+    <td><span class="status-pill">{{ (i.availability_status or ("available" if i.available else "hidden"))|replace("_", " ")|title }}</span></td>
+    <td>
+      <details>
+        <summary style="cursor:pointer;color:var(--primary);font-weight:600;">Edit</summary>
+        <form method="POST" action="{{ url_for('edit_item', item_id=i.id) }}"
+              enctype="multipart/form-data"
+              style="display:flex;flex-direction:column;gap:0.5rem;margin-top:0.75rem;min-width:250px;">
+          <input type="text" name="name" value="{{ i.name }}" placeholder="Name">
+          <input type="text" name="description" value="{{ i.description }}" placeholder="Description">
+          <input type="number" step="0.01" name="price" value="{{ i.price }}" placeholder="Price">
+          <input type="text" name="category" value="{{ i.category }}" placeholder="Category">
+          <label>Menu badge<select name="featured_label"><option value="" {% if not i.featured_label %}selected{% endif %}>No badge</option><option value="popular" {% if i.featured_label=="popular" %}selected{% endif %}>Popular</option><option value="new" {% if i.featured_label=="new" %}selected{% endif %}>New</option><option value="best seller" {% if i.featured_label=="best seller" %}selected{% endif %}>Best seller</option></select></label>
+          <label style="font-size:0.85rem;">Replace image: <input type="file" name="image" accept="image/*"></label>
+          <button class="btn btn-sm" type="submit">Save</button>
+        </form>
+      </details>
+      <div style="display:flex;gap:0.5rem;margin-top:0.5rem;">
+        <form method="POST" action="{{ url_for('set_item_availability', item_id=i.id) }}" class="availability-form"><select name="availability_status"><option value="available" {% if i.availability_status=="available" %}selected{% endif %}>Available</option><option value="temporarily_unavailable" {% if i.availability_status=="temporarily_unavailable" %}selected{% endif %}>Temporarily unavailable</option><option value="sold_out_today" {% if i.availability_status=="sold_out_today" %}selected{% endif %}>Sold out today</option><option value="hidden" {% if i.availability_status=="hidden" %}selected{% endif %}>Hidden from menu</option></select><button class="btn btn-sm btn-outline">Update</button></form>
+        <form method="POST" action="{{ url_for('delete_item', item_id=i.id) }}"
+              onsubmit="return confirm('Delete {{ i.name }}?');">
+          <button class="btn btn-sm btn-danger">Delete</button>
+        </form>
+      </div>
+    </td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Order {{ order.order_number }}{% endblock %}
+{% block content %}
+<section class="success order-confirmation">
+  <span class="success-mark">{% if order.payment_status == 'paid' or order.payment_method != 'paystack' %}✓{% else %}…{% endif %}</span>
+  <span class="eyebrow"><i></i>{% if order.payment_status == 'paid' %}PAYMENT VERIFIED{% elif order.payment_method == 'paystack' %}PAYMENT PENDING VERIFICATION{% else %}ORDER RECEIVED{% endif %}</span>
+  <h1>{% if order.payment_status == 'paid' %}Payment confirmed.
+{% elif order.payment_method == 'paystack' %}We're checking your payment.
+{% else %}Thanks for your order.
+{% endif %}<em>You're in good hands.</em></h1>
+  <p>Your order number is <strong>{{ order.order_number }}</strong>. Keep it to track your order.</p>
+  <div class="confirmation-details"><div><small>Order total</small><b>₦{{ '{:,.2f}'.format(order.total) }}</b></div><div><small>Payment status</small><b>{{ order.payment_status|replace('_',' ')|title }}</b></div><div><small>Order status</small><b>{{ order.status }}</b></div><div><small>Fulfilment</small><b>{{ order.order_type|title }}</b></div></div>
+  {% if order.payment_method == 'paystack' and order.payment_status != 'paid' %}<p class="payment-note">Don't make another payment yet. If you completed payment, refresh the order status or contact the kitchen with your order number.</p>{% endif %}
+  <div class="success-actions"><a href="{{ url_for('track') }}" class="btn btn-primary">Track my order ↗</a><a href="{{ url_for('menu') }}" class="btn btn-dark">Order again</a></div>
+</section>
+{% endblock %}
+{% block scripts %}<script>trackEvent('order_complete');</script>{% endblock %}

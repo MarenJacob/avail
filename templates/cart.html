@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Cart{% endblock %}
+{% block content %}
+<h1>Your Cart</h1>
+{% if items %}
+<table class="table">
+  <thead><tr><th>Item</th><th>Qty</th><th>Subtotal</th><th></th></tr></thead>
+  <tbody>
+  {% for row in items %}
+    <tr>
+      <td>{{ row.item.name }}</td>
+      <td><div class="qty-controls"><button class="btn btn-sm btn-outline remove-btn" data-id="{{ row.item.id }}" aria-label="Decrease {{ row.item.name }} quantity">−</button><b>{{ row.qty }}</b><button class="btn btn-sm add-btn" data-id="{{ row.item.id }}" aria-label="Increase {{ row.item.name }} quantity">+</button></div></td>
+      <td>₦{{ "{:,.0f}".format(row.subtotal) }}</td>
+      <td><button class="btn btn-sm btn-danger remove-btn" data-id="{{ row.item.id }}">−</button></td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+<h3 class="total">Total: ₦{{ "{:,.0f}".format(total) }}</h3>
+<a href="{{ url_for('checkout') }}" class="btn">Proceed to Checkout</a>
+{% else %}
+<p>Your cart is empty. <a href="{{ url_for('menu') }}">Go to menu</a></p>
+{% endif %}
+{% endblock %}
